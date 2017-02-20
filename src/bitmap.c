@@ -59,28 +59,34 @@ static const uint8_t bit_totals[256] = {B6(0), B6(1), B6(1), B6(2)};
 // A place to generalize the creation process and setup
 bitmap_t *bitmap_initialize(size_t n_bits, BITMAP_FLAGS flags);
 
+// Sets requested bit in bitmap
 void bitmap_set(bitmap_t *const bitmap, const size_t bit) {
     bitmap->data[bit >> 3] |= mask[bit & 0x07];
 }
 
+// Clears requested bit in bitmap
 void bitmap_reset(bitmap_t *const bitmap, const size_t bit) {
     bitmap->data[bit >> 3] &= invert_mask[bit & 0x07];
 }
 
+// Returns bit in bitmap
 bool bitmap_test(const bitmap_t *const bitmap, const size_t bit) {
     return bitmap->data[bit >> 3] & mask[bit & 0x07];
 }
 
+// Flips bit in bitmap
 void bitmap_flip(bitmap_t *const bitmap, const size_t bit) {
     bitmap->data[bit >> 3] ^= mask[bit & 0x07];
 }
 
+// Flips all bits in the bitmap
 void bitmap_invert(bitmap_t *const bitmap) {
     for (size_t byte = 0; byte < bitmap->byte_count; ++byte) {
         bitmap->data[byte] = ~bitmap->data[byte];
     }
 }
 
+// Find first set
 size_t bitmap_ffs(const bitmap_t *const bitmap) {
     if (bitmap) {
         size_t result = 0;
@@ -91,6 +97,7 @@ size_t bitmap_ffs(const bitmap_t *const bitmap) {
     return SIZE_MAX;
 }
 
+// Find first zero
 size_t bitmap_ffz(const bitmap_t *const bitmap) {
     if (bitmap) {
         size_t result = 0;
@@ -101,6 +108,7 @@ size_t bitmap_ffz(const bitmap_t *const bitmap) {
     return SIZE_MAX;
 }
 
+// Count all bits set
 size_t bitmap_total_set(const bitmap_t *const bitmap) {
     size_t total = 0;
     if (bitmap) {
@@ -120,6 +128,7 @@ size_t bitmap_total_set(const bitmap_t *const bitmap) {
     return total;
 }
 
+// For each loop for all set bits
 void bitmap_for_each(const bitmap_t *const bitmap, void (*func)(size_t, void *), void *arg) {
     if (bitmap && func) {
         for (size_t idx = 0; idx < bitmap->bit_count; ++idx) {
@@ -130,6 +139,7 @@ void bitmap_for_each(const bitmap_t *const bitmap, void (*func)(size_t, void *),
     }
 }
 
+// Resets bitmap contents to desired pattern
 void bitmap_format(bitmap_t *const bitmap, const uint8_t pattern) {
     memset(bitmap->data, pattern, bitmap->byte_count);
 }

@@ -14,6 +14,9 @@ typedef struct block_store {
     void* block;
 } block_store_t;
 
+/*
+ *  This creates a new BS device, ready to go
+ */
 block_store_t* block_store_create() {
     // Allocate space for 256 block addresses
     block_store_t* bs = malloc(sizeof(block_store_t) * BLOCK_COUNT);
@@ -30,6 +33,9 @@ block_store_t* block_store_create() {
     return bs;
 }
 
+/*
+ * Destroys the provided block storage devices
+ */
 void block_store_destroy(block_store_t* const bs) {
     // Check param
     if (!bs) {
@@ -49,6 +55,10 @@ void block_store_destroy(block_store_t* const bs) {
     return;
 }
 
+/*
+ * Searches for a free block, marks it as in use
+ * and returns the block's id
+ */
 size_t block_store_allocate(block_store_t* const bs) {
     // Check param
     if (!bs) {
@@ -66,6 +76,9 @@ size_t block_store_allocate(block_store_t* const bs) {
     }
 }
 
+/*
+ * Attempts to allocate the requested block id
+ */
 bool block_store_request(block_store_t* const bs, const size_t block_id) {
     // Check params
     if (!bs || block_id > BLOCK_COUNT - 1) {
@@ -81,6 +94,9 @@ bool block_store_request(block_store_t* const bs, const size_t block_id) {
     }
 }
 
+/*
+ * Frees the specified block
+ */
 void block_store_release(block_store_t* const bs, const size_t block_id) {
     // Check param
     if (!bs) {
@@ -92,6 +108,9 @@ void block_store_release(block_store_t* const bs, const size_t block_id) {
     bitmap_reset(bs[BLOCK_COUNT - 1].block, block_id);
 }
 
+/*
+ * Counts the number of blocks marked as in use
+ */
 size_t block_store_get_used_blocks(const block_store_t* const bs) {
     // Check param
     if (!bs) {
@@ -105,6 +124,9 @@ size_t block_store_get_used_blocks(const block_store_t* const bs) {
     return used_blocks - 1;
 }
 
+/*
+ * Counts the number of blocks marked free for use
+ */
 size_t block_store_get_free_blocks(const block_store_t* const bs) {
     // Check param
     if (!bs) {
@@ -116,11 +138,18 @@ size_t block_store_get_free_blocks(const block_store_t* const bs) {
     return free_blocks;
 }
 
+/*
+ * Returns the total number of user-addressable blocks
+ * (since this is constant, you don't even need bs object)
+ */
 size_t block_store_get_total_blocks() {
     // This is constant. Easy!
     return BLOCK_COUNT - 1;
 }
 
+/*
+ * Reads data from the specified block and writes it to designated buffer
+ */
 size_t block_store_read(const block_store_t* const bs, const size_t block_id, void* buffer) {
     // Check params
     if (!bs || block_id > BLOCK_COUNT - 1 || !buffer) {
@@ -132,6 +161,9 @@ size_t block_store_read(const block_store_t* const bs, const size_t block_id, vo
     return BLOCK_SIZE;
 }
 
+/*
+ * Reads data from buffer and writes it to designated block
+ */
 size_t block_store_write(block_store_t* const bs, const size_t block_id, const void* buffer) {
     // Check params
     if (!bs || block_id > BLOCK_COUNT - 1 || !buffer) {
